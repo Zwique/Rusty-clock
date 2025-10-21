@@ -4,7 +4,7 @@ import secrets
 import time
 import subprocess
 
-FLAG_TTL = 30  # seconds
+FLAG_TTL = 10  # seconds
 FLAG_FILE = "flag.txt"
 
 def generate_flag():
