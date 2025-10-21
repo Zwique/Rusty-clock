@@ -16,16 +16,12 @@ def write_flag(flag):
         f.write(flag + "\n")
 
 def get_flag():
-    """Return cached flag if TTL not expired, else generate new."""
     if os.path.exists(FLAG_FILE):
         age = time.time() - os.path.getmtime(FLAG_FILE)
         if age < FLAG_TTL:
-            with open(FLAG_FILE) as f:
-                return f.read().strip()
-    # generate new
-    flag = generate_flag()
-    write_flag(flag)
-    return 0
+            return
+    new_flag = generate_flag() + "\n"
+    write_atomic(FLAG_FILE, new_flag)
 
 if __name__ == "__main__":
     flag = get_flag()
