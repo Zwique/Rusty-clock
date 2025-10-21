@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
 import os
-import random
-import string
-import subprocess
+import secrets
+import sys
 
-# Generate a random 32-character hexadecimal string
-random_hash = ''.join(random.choices('0123456789abcdef', k=32))
+# cryptographically secure 32 hex chars
+random_hash = secrets.token_hex(16)
 flag = f"uacCTF{{wh4t_do35_7h3_cl0ck_s4yyyy_{random_hash}}}"
 
-# Write the flag to flag.txt so your binary can read it if needed
+# write ./flag.txt (keeps compatibility if rusty_clock reads flag.txt)
 with open("flag.txt", "w") as f:
     f.write(flag + "\n")
 
-# Print flag to stdout (optional, if you want user to see it)
-print(flag)
+# print to client immediately (flush so socat forwards)
+print(flag, flush=True)
 
-# Run your original Rust binary
-subprocess.run(["./rusty_clock"])
+# replace this process with the binary so socat is connected to the binary
+# preserving our stdout/stderr. Use exec so there's no extra Python parent.
+os.execv("./rusty_clock", ["./rusty_clock"])
