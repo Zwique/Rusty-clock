@@ -5,7 +5,7 @@ import time
 import subprocess
 
 FLAG_TTL = 30  # seconds
-FLAG_FILE = "/tmp/flag.txt"
+FLAG_FILE = "flag.txt"
 
 def generate_flag():
     random_hash = secrets.token_hex(16)  # 32 hex chars
