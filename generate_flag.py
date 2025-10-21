@@ -25,7 +25,6 @@ def get_flag():
     # generate new
     flag = generate_flag()
     write_flag(flag)
-    return flag
 
 if __name__ == "__main__":
     flag = get_flag()
