@@ -1,19 +1,34 @@
 #!/usr/bin/env python3
 import os
 import secrets
-import sys
+import time
+import subprocess
 
-# cryptographically secure 32 hex chars
-random_hash = secrets.token_hex(16)
-flag = f"uacCTF{{wh4t_do35_7h3_cl0ck_s4yyyy_{random_hash}}}"
+FLAG_TTL = 30  # seconds
+FLAG_FILE = "/tmp/flag.txt"
 
-# write ./flag.txt (keeps compatibility if rusty_clock reads flag.txt)
-with open("flag.txt", "w") as f:
-    f.write(flag + "\n")
+def generate_flag():
+    random_hash = secrets.token_hex(16)  # 32 hex chars
+    return f"uacCTF{{wh4t_do35_7h3_cl0ck_s4yyyy_{random_hash}}}"
 
-# print to client immediately (flush so socat forwards)
-print(flag, flush=True)
+def write_flag(flag):
+    with open(FLAG_FILE, "w") as f:
+        f.write(flag + "\n")
 
-# replace this process with the binary so socat is connected to the binary
-# preserving our stdout/stderr. Use exec so there's no extra Python parent.
-os.execv("./rusty_clock", ["./rusty_clock"])
+def get_flag():
+    """Return cached flag if TTL not expired, else generate new."""
+    if os.path.exists(FLAG_FILE):
+        age = time.time() - os.path.getmtime(FLAG_FILE)
+        if age < FLAG_TTL:
+            with open(FLAG_FILE) as f:
+                return f.read().strip()
+    # generate new
+    flag = generate_flag()
+    write_flag(flag)
+    return flag
+
+if __name__ == "__main__":
+    flag = get_flag()
+    print(flag, flush=True)
+    # Run the Rust binary
+    subprocess.run(["./rusty_clock"])
