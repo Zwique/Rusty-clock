@@ -29,6 +29,5 @@ def get_flag():
 
 if __name__ == "__main__":
     flag = get_flag()
-    print(flag, flush=True)
     # Run the Rust binary
     subprocess.run(["./rusty_clock"])
